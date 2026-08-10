@@ -156,4 +156,8 @@ CFG={"level":{"type":"FeatureCollection","features":levelF},"temp":{"type":"Feat
  "ice":{"type":"FeatureCollection","features":iceF},"towns":TOWNS,"p90":p90,"ldate":ldate,"tmin":tmin,"tmax":tmax,
  "imin":imin,"imax":imax,"iloD":dlabel(imin),"ihiD":dlabel(imax),"nlevel":len(levelF),"ntemp":len(tempF),"nice":len(iceF),"nlake":nlake}
 open(os.path.join(CD,"index.html"),"w").write(open(TMPL).read().replace('__CFG__',json.dumps(CFG,ensure_ascii=False)))
+import shutil
+for f in ('manifest.webmanifest','sw.js','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png'):
+    _s=os.path.join(BASE,f)
+    if os.path.exists(_s): shutil.copy(_s, os.path.join(CD,f))
 print("SUMMARY:",{k:CFG[k] for k in ['nlevel','ntemp','nice','nlake','p90']}," index.html",round(os.path.getsize(os.path.join(CD,'index.html'))/1e6,2),"MB")

@@ -2,6 +2,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Suomen järvet — live</title>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Järvet">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
 <style>
 :root{--accent:#f59e0b;--card:rgba(17,22,34,.9);--bd:rgba(120,140,180,.18);--muted:#96a2ba;--faint:#69768f}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;color:#e8eefc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
@@ -46,6 +55,18 @@
 .btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:9px;border-radius:9px;font-size:12.5px;font-weight:500;text-decoration:none;margin-top:7px;cursor:pointer;border:1px solid var(--bd)}
 .btn.g{background:var(--accent);color:#111;border-color:var(--accent)}.btn.o{background:rgba(255,255,255,.06);color:#cdd7ea}
 #panel .x{position:absolute;top:10px;right:12px;color:var(--faint);cursor:pointer;font-size:16px}
+@media (max-width:640px){
+  .title,.real,.maplibregl-ctrl-bottom-right{display:none}
+  .search{top:8px;left:8px;right:70px;width:auto;transform:none}
+  .search input{padding:10px 13px;font-size:15px}
+  .topr{top:8px;right:8px}
+  .lens{top:56px;left:8px;right:8px;width:auto;display:flex;flex-direction:row;gap:6px;overflow-x:auto;padding:6px}
+  .lens .lab{display:none}
+  .lens .opt{flex:0 0 auto;margin:0;padding:7px 10px;gap:7px}
+  .lens .opt .sub,.lens .opt .ck{display:none}
+  .lens .opt .nm{white-space:nowrap}
+  .legend,#panel{left:8px;right:8px;bottom:10px;width:auto}
+}
 </style></head><body>
 <div id="map"></div>
 <div class="hud card title"><div class="kick"><span class="dot"></span> <span id="kick"></span></div>
@@ -74,7 +95,7 @@ const S={fi:{kick:'Elävät vedet · Suomi · live',
  lnTemp:CFG.ntemp+' havaintopaikkaa · uimarien ja viranomaisten mittaamaa (CC BY 4.0).',lnIce:CFG.nice+' asemaa raportoi jäänlähdön. Aikaisin '+CFG.iloD+', myöhäisin '+CFG.ihiD+'.',
  iceEarly:'aikaisin ('+CFG.iloD+')',iceLate:'myöhäisin ('+CFG.ihiD+')',
  noSel:'Kartalla <b>'+NF(CFG.nlake)+'</b> rekisterijärveä (≥1 ha). Pienemmät lammet (~188 000 kaikkiaan) näkyvät pohjakartalla.',
- dir:'➜ Reittiohjeet',osm:'Avaa OpenStreetMapissa',mLevel:'Vedenkorkeus',in14:'/ 14 vrk',mTemp:'Pintavesi',mIce:'Jää lähti',
+ dir:'➜ Reittiohjeet',osm:'Avaa Google Mapsissa',mLevel:'Vedenkorkeus',in14:'/ 14 vrk',mTemp:'Pintavesi',mIce:'Jää lähti',
  area:'pinta-ala',dmax:'suurin syvyys',dmean:'keskisyvyys',sh:'rantaviiva',vol:'tilavuus',ws:'Vesistöalue',town:'lähin taajama',
  lvlHist:'cm',tHist:'°C',noData:'Ei live-mittausta — järvi silti mukana.',citizen:'uimarihavainto',authority:'viranomaisasema'},
  en:{kick:'Living waters · Finland · live',
@@ -87,7 +108,7 @@ const S={fi:{kick:'Elävät vedet · Suomi · live',
  lnTemp:CFG.ntemp+' sites · measured by swimmers & authorities (CC BY 4.0).',lnIce:CFG.nice+' stations logged ice-out. Earliest '+CFG.iloD+', latest '+CFG.ihiD+'.',
  iceEarly:'earlier ('+CFG.iloD+')',iceLate:'later ('+CFG.ihiD+')',
  noSel:'Showing <b>'+NF(CFG.nlake)+'</b> register lakes (≥1 ha). Smaller ponds (~188,000 total) live on the basemap.',
- dir:'➜ Get directions',osm:'Open in OpenStreetMap',mLevel:'Water level',in14:'/ 14 days',mTemp:'Surface',mIce:'Ice went out',
+ dir:'➜ Get directions',osm:'Open in Google Maps',mLevel:'Water level',in14:'/ 14 days',mTemp:'Surface',mIce:'Ice went out',
  area:'area',dmax:'max depth',dmean:'mean depth',sh:'shoreline',vol:'volume',ws:'Watershed',town:'nearest town',
  lvlHist:'cm',tHist:'°C',noData:'No live measurement — still a lake.',citizen:'citizen reading',authority:'authority station'}};
 let LANG='fi';const vis={level:true,temp:false,ice:false,lakes:true};let LAKES=[],lastF=null;
@@ -146,7 +167,7 @@ function openF(kind,p,c){lastF={kind,p,c};const s=T();
  const nt=nearest(c[0],c[1]);document.getElementById('pTown').innerHTML=nt?(s.town+': <b>'+nt.km+' km · '+nt.name+'</b>'):'';
  const dir=document.getElementById('pDir'),osm=document.getElementById('pOsm');dir.textContent=s.dir;osm.textContent=s.osm;
  dir.href='https://www.google.com/maps/dir/?api=1&destination='+c[1]+','+c[0];
- osm.href='https://www.openstreetmap.org/?mlat='+c[1]+'&mlon='+c[0]+'#map=12/'+c[1]+'/'+c[0];
+ osm.href='https://www.google.com/maps/search/?api=1&query='+c[1]+','+c[0];
  document.getElementById('panel').style.display='block';}
 document.querySelectorAll('.lang span').forEach(x=>x.addEventListener('click',()=>{LANG=x.dataset.lang;applyLang();}));
 document.querySelectorAll('#lens .opt').forEach(o=>o.addEventListener('click',()=>{const l=o.dataset.l;vis[l]=!vis[l];o.classList.toggle('on',vis[l]);map.setLayoutProperty(l,'visibility',vis[l]?'visible':'none');renderLegend();}));
