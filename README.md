@@ -38,6 +38,4 @@ python3 -m http.server -d dist 8000
 # open http://localhost:8000
 ```
 
-## Optional: custom domain
 
-To serve at your own domain (e.g. `jarvet.nophil.org`): add a `CNAME` line to the build that writes your domain into `dist/CNAME`, then point a DNS `CNAME` record at `nanwer.github.io`. Nothing else changes.
