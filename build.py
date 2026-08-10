@@ -59,7 +59,7 @@ def coord(pid):
 
 print("water level history (since 2026-05-01) ...",flush=True)
 byst={}
-for r in odata(f"{HY}/Vedenkorkeus?%24filter=Aika%20ge%20datetime'{(TODAY-datetime.timedelta(days=120)).isoformat()}T00:00:00'&%24top=200000",tag='WL'):
+for r in odata(f"{HY}/Vedenkorkeus?%24filter=Aika%20ge%20datetime'{(TODAY-datetime.timedelta(days=90)).isoformat()}T00:00:00'&%24top=200000",tag='WL'):
     try: byst.setdefault(r['Paikka_Id'],[]).append((r['Aika'][:10],float(r['Arvo'])))
     except: pass
 def d14(pts):
@@ -126,9 +126,9 @@ def dlabel(doy): d=datetime.date(TODAY.year,1,1)+datetime.timedelta(days=doy-1);
 print(f"   ice-out: {len(iceF)} ({dlabel(imin)}–{dlabel(imax)})")
 
 # ---------- lakes (reuse cached 59k register) ----------
-lp=CD+'/lakes.geojson'
-if os.path.exists(lp) and os.path.getsize(lp)>8e6:
-    nlake=len(json.load(open(lp))['features']); print("reusing lakes.geojson:",nlake)
+LGJ=os.path.join(BASE,'lakes.geojson'); lp=os.path.join(CD,'lakes.geojson')
+if os.path.exists(LGJ) and os.path.getsize(LGJ)>8e6:
+    data=open(LGJ,encoding='utf-8').read(); nlake=len(json.loads(data)['features']); print("reusing committed lakes.geojson:",nlake)
 else:
     print("ALL register lakes (~59k) ...",flush=True); feats=[]
     for L in odata(f"{LK}/Jarvi?%24select=Nimi,KuntaNimi,VesalNimi,KoordErLat,KoordErLong,Vesiala,SyvyysSuurin,SyvyysKeski,Tilavuus,Rantaviiva&%24top=70000",tag='lakes'):
@@ -148,8 +148,9 @@ else:
         ws=(L.get('VesalNimi') or '').strip()
         if ws: p["ws"]=ws
         feats.append({"type":"Feature","geometry":{"type":"Point","coordinates":[round(lo,5),round(la,5)]},"properties":p})
-    json.dump({"type":"FeatureCollection","features":feats},open(lp,"w"),ensure_ascii=False); nlake=len(feats)
+    data=json.dumps({"type":"FeatureCollection","features":feats},ensure_ascii=False); open(LGJ,"w",encoding='utf-8').write(data); nlake=len(feats)
     print("   mapped lakes:",nlake)
+open(lp,"w",encoding='utf-8').write(data)  # copy static register into dist/ for serving
 
 CFG={"level":{"type":"FeatureCollection","features":levelF},"temp":{"type":"FeatureCollection","features":tempF},
  "ice":{"type":"FeatureCollection","features":iceF},"towns":TOWNS,"p90":p90,"ldate":ldate,"tmin":tmin,"tmax":tmax,
