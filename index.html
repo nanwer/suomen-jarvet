@@ -73,6 +73,7 @@
 <div class="opt on" data-l="lakes"><span class="sw" style="background:#3a6ea5"></span><div><div class="nm" id="nm-lakes"></div><div class="sub" id="sub-lakes"></div></div><span class="ck"></span></div></div>
 <div class="hud card legend" id="legend"></div>
 <div class="hud card" id="loader"><span class="spin"></span><span id="loaderTxt"></span></div>
+<div class="hud card" id="zhint" style="left:50%;top:56%;transform:translateX(-50%);padding:9px 15px;font-size:12px;color:#cdd7ea;display:none"></div>
 <div class="hud card" id="panel"><span class="x" onclick="hidePanel()">✕</span>
 <h3 id="pName">—</h3><div class="k" id="pKunta"></div><div id="pBody"></div><div class="town" id="pTown"></div>
 <a class="btn g" id="pDir" target="_blank" rel="noopener"></a><a class="btn o" id="pOsm" target="_blank" rel="noopener"></a></div>
@@ -82,22 +83,22 @@ const JW='https://www.jarviwiki.fi/w/api.php', OV='https://overpass-api.de/api/i
 const NF=n=>n.toLocaleString('fi-FI');
 const S={fi:{kick:'Elävät vedet · Suomi · live',sub:'Suomessa on ~<b>188 000</b> järveä. Data haetaan suoraan selaimeen SYKEltä, Järviwikistä ja OSM:stä. Zoomaa ja klikkaa järveä.',
  search:'Hae järveä — esim. Saimaa, Näsijärvi',live:'● Live: SYKE · Järviwiki · OSM',layers:'Tasot (yhdistele vapaasti)',
- level:'Vedenkorkeus',temp:'Lämpötila',ice:'Jäänlähtö',lakes:'Järvet (OSM)',
+ level:'Vedenkorkeus',temp:'Lämpötila',ice:'Jäänlähtö',lakes:'Järvet',
  levelSub:'mittarit · 14 vrk',tempSub:'uimarihavainnot · Järviwiki',iceSub:'kevään jäänlähtö',lakesSub:'oikeat rajat · zoomaa',
  legLevel:'Vedenkorkeus · 14 vrk muutos',legTemp:'Pintaveden lämpötila · viim. 7 vrk',legIce:'Jäänlähtö · kevät',
  loFall:'laskee',hiRise:'nousee',lnLevel:'sininen nousee, oranssi laskee',lnTemp:'uimarien ja viranomaisten mittaamaa',lnIce:'aikaisin → myöhäisin',
  noSel:'Zoomaa sisään niin järvien rajat latautuvat OSM:stä. Klikkaa järveä nähdäksesi sen tiedot.',
  dir:'➜ Reittiohjeet',osm:'Avaa Google Mapsissa',mLevel:'Vedenkorkeus',mTemp:'Pintavesi',mIce:'Jää lähti',in14:'/ 14 vrk',
- town:'lähin taajama',loadT:'Haetaan live-dataa…',loadL:'Haetaan järviä…',citizen:'uimarihavainto',authority:'viranomaisasema',noData:'Ei mittausdataa tälle järvelle.'},
+ town:'lähin taajama',loadT:'Haetaan live-dataa…',loadL:'Haetaan järviä…',zoomHint:'Zoomaa lähemmäs, niin järvien rajat piirtyvät kartalle',citizen:'uimarihavainto',authority:'viranomaisasema',noData:'Ei mittausdataa tälle järvelle.'},
  en:{kick:'Living waters · Finland · live',sub:'Finland has ~<b>188,000</b> lakes. Data is fetched straight to your browser from SYKE, Järviwiki and OSM. Zoom in and click a lake.',
  search:'Search a lake — e.g. Saimaa, Näsijärvi',live:'● Live: SYKE · Järviwiki · OSM',layers:'Layers (mix freely)',
- level:'Water level',temp:'Temperature',ice:'Ice-out',lakes:'Lakes (OSM)',
+ level:'Water level',temp:'Temperature',ice:'Ice-out',lakes:'Lakes',
  levelSub:'gauges · 14-day',tempSub:'swimmer readings · Järviwiki',iceSub:'spring ice-out',lakesSub:'real outlines · zoom',
  legLevel:'Water level · 14-day change',legTemp:'Surface temperature · last 7 days',legIce:'Ice break-up · spring',
  loFall:'falling',hiRise:'rising',lnLevel:'blue rising, amber falling',lnTemp:'measured by swimmers & authorities',lnIce:'earlier → later',
  noSel:'Zoom in and lake outlines load from OSM. Click a lake to see its data.',
  dir:'➜ Get directions',osm:'Open in Google Maps',mLevel:'Water level',mTemp:'Surface',mIce:'Ice went out',in14:'/ 14 days',
- town:'nearest town',loadT:'Fetching live data…',loadL:'Fetching lakes…',citizen:'citizen reading',authority:'authority station',noData:'No measurement data for this lake.'}};
+ town:'nearest town',loadT:'Fetching live data…',loadL:'Fetching lakes…',zoomHint:'Zoom in and the lake outlines will appear',citizen:'citizen reading',authority:'authority station',noData:'No measurement data for this lake.'}};
 let LANG='fi';const vis={level:true,temp:false,ice:false,lakes:true};let lastF=null;
 const FALLBACK=[["Helsinki",24.94,60.17],["Tampere",23.76,61.50],["Oulu",25.47,65.01],["Turku",22.27,60.45],["Jyväskylä",25.75,62.24],["Kuopio",27.68,62.89],["Lahti",25.66,60.98],["Rovaniemi",25.73,66.50],["Vaasa",21.62,63.10],["Joensuu",29.76,62.60],["Mikkeli",27.27,61.69],["Kajaani",27.73,64.22]];
 let STN={},TEMP=[],LEVEL=[],ICE=[],TOWNS=FALLBACK,tmin=10,tmax=22,P=15,imin=80,imax=160;
@@ -143,6 +144,7 @@ const map=new maplibregl.Map({container:'map',center:[25.7,64.4],zoom:4.55,attri
 map.addControl(new maplibregl.NavigationControl({showCompass:false}),'bottom-right');
 const T=()=>S[LANG];
 function loader(on,txt){const l=document.getElementById('loader');document.getElementById('loaderTxt').textContent=txt||'';l.classList.toggle('on',on);}
+function updateHint(){const z=document.getElementById('zhint');if(!z)return;const show=vis.lakes&&map.getZoom()<9.3;z.textContent=show?T().zoomHint:'';z.style.display=show?'block':'none';}
 function block(t,g,lo,hi,n){return '<div class="lgblock"><div class="lt">'+t+'</div><div class="bar" style="background:'+g+'"></div><div class="scale"><span>'+lo+'</span><span>'+hi+'</span></div><div class="lgnote">'+n+'</div></div>';}
 function renderLegend(){let h='';const s=T();
  if(vis.level)h+=block(s.legLevel,'linear-gradient(90deg,#d97706,#64748b 50%,#2563eb)','−'+P+' cm ('+s.loFall+')','+'+P+' cm ('+s.hiRise+')',s.lnLevel);
@@ -155,7 +157,7 @@ function applyLang(){const s=T();document.documentElement.lang=LANG;
  document.getElementById('q').placeholder='🔍  '+s.search;document.getElementById('real').textContent=s.live;document.getElementById('lensLab').textContent=s.layers;
  for(const l of['level','temp','ice','lakes']){document.getElementById('nm-'+l).textContent=s[l];document.getElementById('sub-'+l).textContent=s[l+'Sub'];}
  document.querySelectorAll('.lang span').forEach(x=>x.classList.toggle('on',x.dataset.lang===LANG));
- renderLegend();if(lastF)openF(lastF);}
+ renderLegend();updateHint();if(lastF)openF(lastF);}
 function spark(ser,color){if(!ser||ser.length<2)return'';const w=210,h=40,mn=Math.min(...ser),mx=Math.max(...ser),rg=(mx-mn)||1,X=i=>18+i/(ser.length-1)*(w-22),Y=v=>5+(1-(v-mn)/rg)*(h-16);let d='';ser.forEach((v,i)=>d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' ');return '<svg width="'+w+'" height="'+h+'" style="margin:3px 0"><path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="1.5"/><text x="0" y="9" fill="#69768f" font-size="9">'+(Math.round(mx*10)/10)+'</text><text x="0" y="'+(h-3)+'" fill="#69768f" font-size="9">'+(Math.round(mn*10)/10)+'</text></svg>';}
 
 map.on('load',async()=>{
@@ -182,6 +184,7 @@ map.on('load',async()=>{
  map.on('click',e=>{const b=6,pt=e.point;const f=map.queryRenderedFeatures([[pt.x-b,pt.y-b],[pt.x+b,pt.y+b]],{layers:['level','temp','ice','lakes-fill']});
    const lake=f.find(x=>x.layer.id==='lakes-fill');if(lake){openLake(lake,[e.lngLat.lng,e.lngLat.lat]);return;}const m=f[0];if(m)openF(m.properties);});
  map.on('moveend',()=>{clearTimeout(window._lt);window._lt=setTimeout(loadLakes,450);});
+ map.on('zoom',updateHint); updateHint();
 });
 
 // ---------- OSM lakes (viewport) ----------
@@ -228,7 +231,7 @@ function openLake(feat,ll){const s=T();const g=feat.geometry;const full=LAKEF.fi
 document.querySelectorAll('.lang span').forEach(x=>x.addEventListener('click',()=>{LANG=x.dataset.lang;applyLang();}));
 document.querySelectorAll('#lens .opt').forEach(o=>o.addEventListener('click',()=>{const l=o.dataset.l;vis[l]=!vis[l];o.classList.toggle('on',vis[l]);
  if(l==='lakes'){['lakes-fill','lakes-line'].forEach(id=>map.setLayoutProperty(id,'visibility',vis.lakes?'visible':'none'));if(vis.lakes){lakeKey='';loadLakes();}}
- else map.setLayoutProperty(l,'visibility',vis[l]?'visible':'none');renderLegend();}));
+ else map.setLayoutProperty(l,'visibility',vis[l]?'visible':'none');renderLegend();updateHint();}));
 
 // ---------- search (Nominatim) ----------
 const q=document.getElementById('q'),res=document.getElementById('res');let stimer;
