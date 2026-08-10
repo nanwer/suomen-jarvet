@@ -4,54 +4,54 @@
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/osmtogeojson@3.0.0-beta.5/osmtogeojson.js"></script>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0b1220">
+<meta name="theme-color" content="#efe7d6">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Järvet">
 <link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" type="image/png" href="icon-192.png">
 <script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
 <style>
-:root{--accent:#f59e0b;--card:rgba(17,22,34,.9);--bd:rgba(120,140,180,.18);--muted:#96a2ba;--faint:#69768f}
-*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;color:#e8eefc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
-#map{position:absolute;inset:0;background:#eef2f6}.maplibregl-ctrl-attrib{font-size:10px}
-.hud{position:absolute;z-index:5}.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:0 8px 30px rgba(0,20,40,.25);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.title{top:18px;left:18px;padding:14px 17px;max-width:314px}
-.kick{font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;display:flex;gap:8px;align-items:center}
-.dot{width:7px;height:7px;border-radius:50%;background:#37d67a;box-shadow:0 0 9px #37d67a}
-.title h1{margin:6px 0 4px;font-size:22px;font-weight:600}.title h1 b{color:var(--accent)}
-.title p{margin:0;font-size:12px;line-height:1.55;color:var(--muted)}.title p b{color:#cdd7ea;font-weight:600}
+:root{--accent:#c1682a;--card:#f4efe3;--bd:#d9cfba;--muted:#5f6b60;--faint:#8f887a;--ink:#213d33;--moss:#3f7a52;--serif:"Iowan Old Style",Palatino,"Palatino Linotype","Book Antiqua",Georgia,serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+#map{position:absolute;inset:0;background:#e8e3d7}.maplibregl-ctrl-attrib{font-size:10px}
+.hud{position:absolute;z-index:5}.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 6px 22px rgba(60,45,25,.14)}
+.title{top:18px;left:18px;padding:15px 18px;max-width:320px}
+.kick{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;display:flex;gap:8px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--moss);box-shadow:0 0 0 3px rgba(63,122,82,.18)}
+.title h1{margin:7px 0 5px;font-size:25px;font-weight:600;font-family:var(--serif);letter-spacing:-.01em}.title h1 b{color:var(--accent);font-style:italic}
+.title p{margin:0;font-size:12px;line-height:1.6;color:var(--muted)}.title p b{color:var(--ink);font-weight:600}
 .search{top:18px;left:50%;transform:translateX(-50%);width:340px}
-.search input{width:100%;padding:11px 15px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:#fff;font-size:14px;backdrop-filter:blur(14px);box-shadow:0 8px 30px rgba(0,20,40,.25);outline:none}
+.search input{width:100%;padding:11px 15px;border-radius:11px;border:1px solid var(--bd);background:var(--card);color:var(--ink);font-size:14px;box-shadow:0 6px 22px rgba(60,45,25,.14);outline:none}
 .search input::placeholder{color:var(--faint)}
-.results{margin-top:6px;border-radius:12px;overflow:hidden;max-height:330px;overflow-y:auto;display:none}
-.results.on{display:block}.res{padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
-.res:hover{background:rgba(245,158,11,.16)}.res .m{font-size:11px;color:var(--faint)}
+.results{margin-top:6px;border-radius:11px;overflow:hidden;max-height:330px;overflow-y:auto;display:none}
+.results.on{display:block}.res{padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--bd);font-size:13px;color:var(--ink)}
+.res:hover{background:rgba(193,104,42,.1)}.res .m{font-size:11px;color:var(--faint)}
 .topr{top:18px;right:18px;display:flex;gap:8px;align-items:center}
-.lang{display:flex;background:var(--card);border:1px solid var(--bd);border-radius:99px;overflow:hidden;box-shadow:0 8px 30px rgba(0,20,40,.25)}
-.lang span{padding:6px 12px;font-size:11px;cursor:pointer;color:var(--muted)}.lang span.on{background:var(--accent);color:#111}
-.real{font-size:10px;letter-spacing:.1em;background:rgba(11,26,18,.85);border:1px solid rgba(55,214,122,.35);padding:6px 10px;border-radius:99px;white-space:nowrap;color:#37d67a}
+.lang{display:flex;background:var(--card);border:1px solid var(--bd);border-radius:99px;overflow:hidden;box-shadow:0 6px 22px rgba(60,45,25,.14)}
+.lang span{padding:6px 12px;font-size:11px;cursor:pointer;color:var(--muted)}.lang span.on{background:var(--accent);color:#fff}
+.real{font-size:10px;letter-spacing:.1em;background:#e7efe1;border:1px solid rgba(63,122,82,.35);padding:6px 10px;border-radius:99px;white-space:nowrap;color:var(--moss)}
 .lens{top:66px;right:18px;padding:8px;width:224px}
 .lens .lab{font-size:9.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;padding:4px 6px 6px}
-.opt{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.03);cursor:pointer;margin-bottom:5px}
-.opt:hover{background:rgba(255,255,255,.07)}.opt.on{border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.12)}
-.opt .sw{width:20px;height:20px;border-radius:6px;flex:0 0 auto;opacity:.4}.opt.on .sw{opacity:1}
-.opt .nm{font-size:12.5px}.opt .sub{font-size:10px;color:var(--faint);margin-top:1px}
-.opt .ck{margin-left:auto;width:16px;height:16px;border-radius:5px;border:1.5px solid var(--faint);flex:0 0 auto}.opt.on .ck{background:var(--accent);border-color:var(--accent)}
+.opt{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:9px;border:1px solid transparent;background:rgba(33,61,51,.03);cursor:pointer;margin-bottom:5px}
+.opt:hover{background:rgba(33,61,51,.06)}.opt.on{border-color:rgba(193,104,42,.45);background:rgba(193,104,42,.1)}
+.opt .sw{width:20px;height:20px;border-radius:5px;flex:0 0 auto;opacity:.45}.opt.on .sw{opacity:1}
+.opt .nm{font-size:12.5px;color:var(--ink)}.opt .sub{font-size:10px;color:var(--faint);margin-top:1px}
+.opt .ck{margin-left:auto;width:16px;height:16px;border-radius:5px;border:1.5px solid var(--bd);flex:0 0 auto}.opt.on .ck{background:var(--accent);border-color:var(--accent)}
 .legend{left:18px;bottom:20px;padding:12px 14px;width:266px}.lgblock{margin-bottom:10px}.lgblock:last-child{margin-bottom:0}
-.lt{font-size:11.5px;color:#e8eefc;margin-bottom:7px;font-weight:500}
+.lt{font-size:11.5px;color:var(--ink);margin-bottom:7px;font-weight:600}
 .bar{height:9px;border-radius:5px;margin-bottom:5px}.scale{display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
 .lgnote{margin-top:6px;font-size:10px;color:var(--faint);line-height:1.4}
 #panel{right:18px;bottom:20px;width:262px;padding:15px 16px;display:none}
-#panel h3{margin:0 0 2px;font-size:16px;font-weight:600}#panel .k{font-size:11px;color:var(--muted);margin-bottom:9px}
+#panel h3{margin:0 0 2px;font-size:18px;font-weight:600;font-family:var(--serif)}#panel .k{font-size:11px;color:var(--muted);margin-bottom:9px}
 .badge{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:99px;margin:0 6px 8px 0;font-weight:500}
-.badge.c{background:rgba(55,214,122,.16);color:#4ade80}.badge.a{background:rgba(148,163,184,.2);color:#cbd5e1}
-.row{display:flex;align-items:center;gap:8px;font-size:13px;margin:5px 0;color:#cdd7ea}.row .sw2{width:9px;height:9px;border-radius:50%;flex:0 0 auto}.row b{color:#fff;font-weight:600}
-.town{font-size:11px;color:var(--muted);margin:6px 0 2px}.town b{color:#cdd7ea;font-weight:500}
+.badge.c{background:#e7efe1;color:var(--moss)}.badge.a{background:#e9e3d4;color:#7a6f57}
+.row{display:flex;align-items:center;gap:8px;font-size:13px;margin:5px 0;color:#4a5a50}.row .sw2{width:9px;height:9px;border-radius:50%;flex:0 0 auto}.row b{color:var(--ink);font-weight:600}
+.town{font-size:11px;color:var(--muted);margin:6px 0 2px}.town b{color:var(--ink);font-weight:600}
 .cap{font-size:10px;color:var(--faint);margin-top:1px}
-.btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:9px;border-radius:9px;font-size:12.5px;font-weight:500;text-decoration:none;margin-top:7px;cursor:pointer;border:1px solid var(--bd)}
-.btn.g{background:var(--accent);color:#111;border-color:var(--accent)}.btn.o{background:rgba(255,255,255,.06);color:#cdd7ea}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:9px;border-radius:8px;font-size:12.5px;font-weight:600;text-decoration:none;margin-top:7px;cursor:pointer;border:1px solid var(--bd)}
+.btn.g{background:var(--accent);color:#fff;border-color:var(--accent)}.btn.o{background:rgba(33,61,51,.05);color:var(--ink)}
 #panel .x{position:absolute;top:10px;right:12px;color:var(--faint);cursor:pointer;font-size:16px}
-#loader{left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 16px;font-size:12px;color:#cdd7ea;display:none;align-items:center;gap:9px}
-#loader.on{display:flex}.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite}
+#loader{left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 16px;font-size:12px;color:var(--ink);display:none;align-items:center;gap:9px}
+#loader.on{display:flex}.spin{width:14px;height:14px;border:2px solid rgba(33,61,51,.2);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (max-width:640px){
   .title,.real,.maplibregl-ctrl-bottom-right{display:none}
@@ -67,13 +67,13 @@
 <div class="hud search"><input id="q" autocomplete="off"><div class="results card" id="res"></div></div>
 <div class="hud topr"><div class="lang"><span data-lang="fi" class="on">FI</span><span data-lang="en">EN</span></div><div class="real" id="real"></div></div>
 <div class="hud card lens" id="lens"><div class="lab" id="lensLab"></div>
-<div class="opt on" data-l="level"><span class="sw" style="background:linear-gradient(90deg,#d97706,#64748b,#2563eb)"></span><div><div class="nm" id="nm-level"></div><div class="sub" id="sub-level"></div></div><span class="ck"></span></div>
-<div class="opt" data-l="temp"><span class="sw" style="background:linear-gradient(90deg,#2563eb,#14b8a6,#f59e0b,#ef4444)"></span><div><div class="nm" id="nm-temp"></div><div class="sub" id="sub-temp"></div></div><span class="ck"></span></div>
-<div class="opt" data-l="ice"><span class="sw" style="background:linear-gradient(90deg,#f59e0b,#14b8a6,#2563eb)"></span><div><div class="nm" id="nm-ice"></div><div class="sub" id="sub-ice"></div></div><span class="ck"></span></div>
-<div class="opt on" data-l="lakes"><span class="sw" style="background:#3a6ea5"></span><div><div class="nm" id="nm-lakes"></div><div class="sub" id="sub-lakes"></div></div><span class="ck"></span></div></div>
+<div class="opt on" data-l="level"><span class="sw" style="background:linear-gradient(90deg,#b5651d,#9b9482,#2f6f9e)"></span><div><div class="nm" id="nm-level"></div><div class="sub" id="sub-level"></div></div><span class="ck"></span></div>
+<div class="opt" data-l="temp"><span class="sw" style="background:linear-gradient(90deg,#3a6ea0,#4a9e8f,#b0451d)"></span><div><div class="nm" id="nm-temp"></div><div class="sub" id="sub-temp"></div></div><span class="ck"></span></div>
+<div class="opt" data-l="ice"><span class="sw" style="background:linear-gradient(90deg,#c1682a,#4a9e8f,#2f6f9e)"></span><div><div class="nm" id="nm-ice"></div><div class="sub" id="sub-ice"></div></div><span class="ck"></span></div>
+<div class="opt on" data-l="lakes"><span class="sw" style="background:#7fa8c4"></span><div><div class="nm" id="nm-lakes"></div><div class="sub" id="sub-lakes"></div></div><span class="ck"></span></div></div>
 <div class="hud card legend" id="legend"></div>
 <div class="hud card" id="loader"><span class="spin"></span><span id="loaderTxt"></span></div>
-<div class="hud card" id="zhint" style="left:50%;top:56%;transform:translateX(-50%);padding:9px 15px;font-size:12px;color:#cdd7ea;display:none"></div>
+<div class="hud card" id="zhint" style="left:50%;top:56%;transform:translateX(-50%);padding:9px 15px;font-size:12px;color:var(--ink);display:none"></div>
 <div class="hud card" id="panel"><span class="x" onclick="hidePanel()">✕</span>
 <h3 id="pName">—</h3><div class="k" id="pKunta"></div><div id="pBody"></div><div class="town" id="pTown"></div>
 <a class="btn g" id="pDir" target="_blank" rel="noopener"></a><a class="btn o" id="pOsm" target="_blank" rel="noopener"></a></div>
@@ -141,16 +141,16 @@ async function loadTowns(){try{const q='[out:json][timeout:60];area["ISO3166-1"=
 
 // ---------- map ----------
 const map=new maplibregl.Map({container:'map',center:[25.7,64.4],zoom:4.55,attributionControl:true,
- style:{version:8,sources:{carto:{type:'raster',tileSize:256,attribution:'© OpenStreetMap contributors © CARTO · SYKE · Järviwiki (CC BY 4.0)',tiles:['https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png','https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png','https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png']}},layers:[{id:'bg',type:'raster',source:'carto'}]}});
+ style:{version:8,sources:{carto:{type:'raster',tileSize:256,attribution:'© OpenStreetMap contributors © CARTO · SYKE · Järviwiki (CC BY 4.0)',tiles:['https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png','https://b.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png','https://c.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png']}},layers:[{id:'bg',type:'raster',source:'carto'}]}});
 map.addControl(new maplibregl.NavigationControl({showCompass:false}),'bottom-right');
 const T=()=>S[LANG];
 function loader(on,txt){const l=document.getElementById('loader');document.getElementById('loaderTxt').textContent=txt||'';l.classList.toggle('on',on);}
 function updateHint(){const z=document.getElementById('zhint');if(!z)return;const show=vis.lakes&&map.getZoom()<LAKE_ZOOM;z.textContent=show?T().zoomHint:'';z.style.display=show?'block':'none';}
 function block(t,g,lo,hi,n){return '<div class="lgblock"><div class="lt">'+t+'</div><div class="bar" style="background:'+g+'"></div><div class="scale"><span>'+lo+'</span><span>'+hi+'</span></div><div class="lgnote">'+n+'</div></div>';}
 function renderLegend(){let h='';const s=T();
- if(vis.level)h+=block(s.legLevel,'linear-gradient(90deg,#d97706,#64748b 50%,#2563eb)','−'+P+' cm ('+s.loFall+')','+'+P+' cm ('+s.hiRise+')',s.lnLevel);
- if(vis.temp)h+=block(s.legTemp,'linear-gradient(90deg,#2563eb,#14b8a6 40%,#f59e0b 72%,#ef4444)',tmin+'°C',tmax+'°C',s.lnTemp);
- if(vis.ice)h+=block(s.legIce,'linear-gradient(90deg,#f59e0b,#14b8a6 50%,#2563eb)',s.loFall==='laskee'?'aikaisin':'earlier',s.loFall==='laskee'?'myöhäisin':'later',s.lnIce);
+ if(vis.level)h+=block(s.legLevel,'linear-gradient(90deg,#b5651d,#9b9482 50%,#2f6f9e)','−'+P+' cm ('+s.loFall+')','+'+P+' cm ('+s.hiRise+')',s.lnLevel);
+ if(vis.temp)h+=block(s.legTemp,'linear-gradient(90deg,#3a6ea0,#4a9e8f 45%,#b0451d)',tmin+'°C',tmax+'°C',s.lnTemp);
+ if(vis.ice)h+=block(s.legIce,'linear-gradient(90deg,#c1682a,#4a9e8f 50%,#2f6f9e)',s.loFall==='laskee'?'aikaisin':'earlier',s.loFall==='laskee'?'myöhäisin':'later',s.lnIce);
  if(!vis.level&&!vis.temp&&!vis.ice)h='<div class="lgnote">'+s.noSel+'</div>';
  document.getElementById('legend').innerHTML=h;}
 function applyLang(){const s=T();document.documentElement.lang=LANG;
@@ -159,15 +159,15 @@ function applyLang(){const s=T();document.documentElement.lang=LANG;
  for(const l of['level','temp','ice','lakes']){document.getElementById('nm-'+l).textContent=s[l];document.getElementById('sub-'+l).textContent=s[l+'Sub'];}
  document.querySelectorAll('.lang span').forEach(x=>x.classList.toggle('on',x.dataset.lang===LANG));
  renderLegend();updateHint();if(lastF)openF(lastF);}
-function spark(ser,color){if(!ser||ser.length<2)return'';const w=210,h=40,mn=Math.min(...ser),mx=Math.max(...ser),rg=(mx-mn)||1,X=i=>18+i/(ser.length-1)*(w-22),Y=v=>5+(1-(v-mn)/rg)*(h-16);let d='';ser.forEach((v,i)=>d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' ');return '<svg width="'+w+'" height="'+h+'" style="margin:3px 0"><path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="1.5"/><text x="0" y="9" fill="#69768f" font-size="9">'+(Math.round(mx*10)/10)+'</text><text x="0" y="'+(h-3)+'" fill="#69768f" font-size="9">'+(Math.round(mn*10)/10)+'</text></svg>';}
+function spark(ser,color){if(!ser||ser.length<2)return'';const w=210,h=40,mn=Math.min(...ser),mx=Math.max(...ser),rg=(mx-mn)||1,X=i=>18+i/(ser.length-1)*(w-22),Y=v=>5+(1-(v-mn)/rg)*(h-16);let d='';ser.forEach((v,i)=>d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' ');return '<svg width="'+w+'" height="'+h+'" style="margin:3px 0"><path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="1.5"/><text x="0" y="9" fill="#8a8474" font-size="9">'+(Math.round(mx*10)/10)+'</text><text x="0" y="'+(h-3)+'" fill="#8a8474" font-size="9">'+(Math.round(mn*10)/10)+'</text></svg>';}
 
 map.on('load',async()=>{
  map.addSource('lakes',{type:'geojson',data:fc([])});map.addSource('level',{type:'geojson',data:fc([])});map.addSource('temp',{type:'geojson',data:fc([])});map.addSource('ice',{type:'geojson',data:fc([])});
- map.addLayer({id:'lakes-fill',type:'fill',source:'lakes',paint:{'fill-color':'#4a90d9','fill-opacity':0.35}});
- map.addLayer({id:'lakes-line',type:'line',source:'lakes',paint:{'line-color':'#2e6fb0','line-width':1}});
- map.addLayer({id:'level',type:'circle',source:'level',paint:{'circle-radius':['interpolate',['linear'],['zoom'],4,3.5,10,7],'circle-stroke-width':.8,'circle-stroke-color':'rgba(20,25,40,.55)','circle-color':['interpolate',['linear'],['coalesce',['get','d'],0],-P,'#d97706',0,'#94a3b8',P,'#2563eb']}});
- map.addLayer({id:'temp',type:'circle',source:'temp',layout:{visibility:'none'},paint:{'circle-radius':['interpolate',['linear'],['zoom'],4,4.5,10,9],'circle-stroke-width':.8,'circle-stroke-color':'rgba(20,25,40,.55)','circle-color':['interpolate',['linear'],['get','t'],tmin,'#2563eb',(tmin+tmax)/2,'#14b8a6',tmax,'#ef4444']}});
- map.addLayer({id:'ice',type:'circle',source:'ice',layout:{visibility:'none'},paint:{'circle-radius':['interpolate',['linear'],['zoom'],4,4.5,10,9],'circle-stroke-width':.8,'circle-stroke-color':'rgba(20,25,40,.55)','circle-color':['interpolate',['linear'],['get','doy'],imin,'#f59e0b',(imin+imax)/2,'#14b8a6',imax,'#2563eb']}});
+ map.addLayer({id:'lakes-fill',type:'fill',source:'lakes',paint:{'fill-color':'#9fc0d8','fill-opacity':0.45}});
+ map.addLayer({id:'lakes-line',type:'line',source:'lakes',paint:{'line-color':'#4a7ea3','line-width':1}});
+ map.addLayer({id:'level',type:'circle',source:'level',paint:{'circle-radius':['interpolate',['linear'],['zoom'],4,3.5,10,7],'circle-stroke-width':.8,'circle-stroke-color':'rgba(45,40,28,.5)','circle-color':['interpolate',['linear'],['coalesce',['get','d'],0],-P,'#b5651d',0,'#9b9482',P,'#2f6f9e']}});
+ map.addLayer({id:'temp',type:'circle',source:'temp',layout:{visibility:'none'},paint:{'circle-radius':['interpolate',['linear'],['zoom'],4,4.5,10,9],'circle-stroke-width':.8,'circle-stroke-color':'rgba(45,40,28,.5)','circle-color':['interpolate',['linear'],['get','t'],tmin,'#3a6ea0',(tmin+tmax)/2,'#4a9e8f',tmax,'#b0451d']}});
+ map.addLayer({id:'ice',type:'circle',source:'ice',layout:{visibility:'none'},paint:{'circle-radius':['interpolate',['linear'],['zoom'],4,4.5,10,9],'circle-stroke-width':.8,'circle-stroke-color':'rgba(45,40,28,.5)','circle-color':['interpolate',['linear'],['get','doy'],imin,'#c1682a',(imin+imax)/2,'#4a9e8f',imax,'#2f6f9e']}});
  applyLang();
  // fetch live data
  loader(true,T().loadT);
@@ -215,9 +215,9 @@ function hidePanel(){document.getElementById('panel').style.display='none';lastF
 function setBtns(lon,lat){const s=T();const dir=document.getElementById('pDir'),osm=document.getElementById('pOsm');dir.textContent=s.dir;osm.textContent=s.osm;dir.href='https://www.google.com/maps/dir/?api=1&destination='+lat+','+lon;osm.href='https://www.google.com/maps/search/?api=1&query='+lat+','+lon;}
 function rowHtml(sw,label,val){return '<div class="row"><span class="sw2" style="background:'+sw+'"></span>'+label+' <b>'+val+'</b></div>';}
 function openF(p){lastF={single:p};const s=T();document.getElementById('pName').textContent=p.name||'—';document.getElementById('pKunta').textContent=p.kunta?((LANG==='en'?'in ':'')+p.kunta):'';
- let h='';if(p.kind==='level')h=rowHtml('#2563eb',s.mLevel,(p.d>0?'▲ +':p.d<0?'▼ ':'')+(p.d==null?'—':p.d+' cm')+' '+s.in14)+spark(p.series,'#2563eb');
- else if(p.kind==='temp')h='<span class="badge '+(p.m||'c')+'">'+(p.m==='a'?s.authority:s.citizen)+'</span>'+rowHtml('#ef4444',s.mTemp,p.t+' °C · '+p.date)+spark(p.series,'#ef4444');
- else if(p.kind==='ice')h=rowHtml('#2563eb',s.mIce,(''+p.date).split('-').reverse().join('.'));
+ let h='';if(p.kind==='level')h=rowHtml('#2f6f9e',s.mLevel,(p.d>0?'▲ +':p.d<0?'▼ ':'')+(p.d==null?'—':p.d+' cm')+' '+s.in14)+spark(p.series,'#2f6f9e');
+ else if(p.kind==='temp')h='<span class="badge '+(p.m||'c')+'">'+(p.m==='a'?s.authority:s.citizen)+'</span>'+rowHtml('#b0451d',s.mTemp,p.t+' °C · '+p.date)+spark(p.series,'#b0451d');
+ else if(p.kind==='ice')h=rowHtml('#5b8bab',s.mIce,(''+p.date).split('-').reverse().join('.'));
  document.getElementById('pBody').innerHTML=h;
  const nt=nearestTown(p.lon,p.lat);document.getElementById('pTown').innerHTML=nt?(s.town+': <b>'+nt.km+' km · '+nt.name+'</b>'):'';
  setBtns(p.lon,p.lat);document.getElementById('panel').style.display='block';}
@@ -227,10 +227,10 @@ function openLake(feat,ll){const s=T();const g=feat.geometry;const full=LAKEF.fi
  // consolidate: measurements inside this lake polygon
  const inT=TEMP.filter(m=>pip([m.lon,m.lat],rings)),inL=LEVEL.filter(m=>pip([m.lon,m.lat],rings)),inI=ICE.filter(m=>pip([m.lon,m.lat],rings));
  let h='';
- if(inT.length){const t=inT.sort((a,b)=>b.t-a.t)[0];h+='<span class="badge '+(t.m||'c')+'">'+(t.m==='a'?s.authority:s.citizen)+'</span>'+rowHtml('#ef4444',s.mTemp,t.t+' °C · '+t.date);}
- if(inL.length){const l=inL[0];h+=rowHtml('#2563eb',s.mLevel,(l.d>0?'▲ +':l.d<0?'▼ ':'')+(l.d==null?'—':l.d+' cm')+' '+s.in14);}
+ if(inT.length){const t=inT.sort((a,b)=>b.t-a.t)[0];h+='<span class="badge '+(t.m||'c')+'">'+(t.m==='a'?s.authority:s.citizen)+'</span>'+rowHtml('#b0451d',s.mTemp,t.t+' °C · '+t.date);}
+ if(inL.length){const l=inL[0];h+=rowHtml('#2f6f9e',s.mLevel,(l.d>0?'▲ +':l.d<0?'▼ ':'')+(l.d==null?'—':l.d+' cm')+' '+s.in14);}
  if(inI.length){h+=rowHtml('#7fb0d8',s.mIce,(''+inI[0].date).split('-').reverse().join('.'));}
- const tags=feat.properties;if(tags.depth||tags['max_depth'])h+=rowHtml('#64748b',(LANG==='fi'?'syvyys':'depth'),(tags['max_depth']||tags.depth)+' m');
+ const tags=feat.properties;if(tags.depth||tags['max_depth'])h+=rowHtml('#8a8474',(LANG==='fi'?'syvyys':'depth'),(tags['max_depth']||tags.depth)+' m');
  if(!h)h='<div class="cap" style="margin:4px 0 2px">'+s.noData+'</div>';
  document.getElementById('pBody').innerHTML=h;
  document.getElementById('pKunta').textContent='';
