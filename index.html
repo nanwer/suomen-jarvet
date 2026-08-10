@@ -80,6 +80,7 @@
 <script>
 const HY='https://rajapinnat.ymparisto.fi/api/Hydrologiarajapinta/1.1/odata';
 const JW='https://www.jarviwiki.fi/w/api.php', OV='https://overpass-api.de/api/interpreter', NOM='https://nominatim.openstreetmap.org/search';
+const OVERPASS_EPS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter'], LAKE_ZOOM=8.5;
 const NF=n=>n.toLocaleString('fi-FI');
 const S={fi:{kick:'Elävät vedet · Suomi · live',sub:'Suomessa on ~<b>188 000</b> järveä. Data haetaan suoraan selaimeen SYKEltä, Järviwikistä ja OSM:stä. Zoomaa ja klikkaa järveä.',
  search:'Hae järveä — esim. Saimaa, Näsijärvi',live:'● Live: SYKE · Järviwiki · OSM',layers:'Tasot (yhdistele vapaasti)',
@@ -144,7 +145,7 @@ const map=new maplibregl.Map({container:'map',center:[25.7,64.4],zoom:4.55,attri
 map.addControl(new maplibregl.NavigationControl({showCompass:false}),'bottom-right');
 const T=()=>S[LANG];
 function loader(on,txt){const l=document.getElementById('loader');document.getElementById('loaderTxt').textContent=txt||'';l.classList.toggle('on',on);}
-function updateHint(){const z=document.getElementById('zhint');if(!z)return;const show=vis.lakes&&map.getZoom()<9.3;z.textContent=show?T().zoomHint:'';z.style.display=show?'block':'none';}
+function updateHint(){const z=document.getElementById('zhint');if(!z)return;const show=vis.lakes&&map.getZoom()<LAKE_ZOOM;z.textContent=show?T().zoomHint:'';z.style.display=show?'block':'none';}
 function block(t,g,lo,hi,n){return '<div class="lgblock"><div class="lt">'+t+'</div><div class="bar" style="background:'+g+'"></div><div class="scale"><span>'+lo+'</span><span>'+hi+'</span></div><div class="lgnote">'+n+'</div></div>';}
 function renderLegend(){let h='';const s=T();
  if(vis.level)h+=block(s.legLevel,'linear-gradient(90deg,#d97706,#64748b 50%,#2563eb)','−'+P+' cm ('+s.loFall+')','+'+P+' cm ('+s.hiRise+')',s.lnLevel);
@@ -189,14 +190,23 @@ map.on('load',async()=>{
 
 // ---------- OSM lakes (viewport) ----------
 let LAKEF=[],lakeKey='';
+async function overpass(q){
+ for(const ep of OVERPASS_EPS){
+   const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),14000);
+   try{const r=await fetch(ep,{method:'POST',body:'data='+encodeURIComponent(q),signal:ctl.signal});clearTimeout(t);if(r.ok)return await r.json();}
+   catch(e){clearTimeout(t);}
+ }
+ return null;
+}
 async function loadLakes(){
- if(!vis.lakes||map.getZoom()<9.3){map.getSource('lakes')&&map.getSource('lakes').setData(fc([]));LAKEF=[];return;}
+ updateHint();
+ if(!vis.lakes||map.getZoom()<LAKE_ZOOM){if(map.getSource('lakes'))map.getSource('lakes').setData(fc([]));LAKEF=[];return;}
  const b=map.getBounds();const bbox=[b.getSouth(),b.getWest(),b.getNorth(),b.getEast()].map(x=>x.toFixed(3)).join(',');
  if(bbox===lakeKey)return;lakeKey=bbox;loader(true,T().loadL);
- const q='[out:json][timeout:25];(way["natural"="water"]["name"]('+bbox+');relation["natural"="water"]["name"]('+bbox+'););out geom;';
- try{const d=await jget(OV,{method:'POST',body:'data='+encodeURIComponent(q)});const g=osmtogeojson(d);
-   LAKEF=(g.features||[]).filter(f=>f.geometry&&/Polygon/.test(f.geometry.type)&&f.properties&&f.properties.name);
-   map.getSource('lakes').setData({type:'FeatureCollection',features:LAKEF});}catch(e){console.warn('overpass',e);}
+ const q='[out:json][timeout:20];(way["natural"="water"]["name"]('+bbox+');relation["natural"="water"]["name"]('+bbox+'););out geom;';
+ const d=await overpass(q);
+ if(d){const g=osmtogeojson(d);LAKEF=(g.features||[]).filter(f=>f.geometry&&/Polygon/.test(f.geometry.type)&&f.properties&&f.properties.name);map.getSource('lakes').setData({type:'FeatureCollection',features:LAKEF});}
+ else{lakeKey='';}  // fetch failed on all endpoints — keep prior lakes, allow retry on next move
  loader(false);
 }
 
